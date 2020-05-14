@@ -96,10 +96,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+<<<<<<< HEAD
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null){
             //updateUI(currentUser);
         }
+=======
+
+
+
+
+>>>>>>> melih
     }
 }
