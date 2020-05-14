@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "859464306722",
+    "firebase_url": "https://chat-with-pizza.firebaseio.com",
+    "project_id": "chat-with-pizza",
+    "storage_bucket": "chat-with-pizza.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859464306722:android:c1a363b5dbd9b843a0ba7b",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859464306722-vv1kc85e3necjsfm39vuk8t3ulk71v7b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAWJ7X6VWXS2xby8mSaQEDHGMWR_03n1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859464306722-vv1kc85e3necjsfm39vuk8t3ulk71v7b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
