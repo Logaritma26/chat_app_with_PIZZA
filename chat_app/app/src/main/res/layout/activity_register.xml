@@ -4,12 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
-    tools:context=".Register">
-=======
-    tools:context=".login.register">
 
->>>>>>> master
+    tools:context=".login.register">
 
     <EditText
         android:id="@+id/nameEditText"
