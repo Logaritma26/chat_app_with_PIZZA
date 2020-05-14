@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void login(String username, String password) {
         if (!username.isEmpty() &&  !password.isEmpty()){
+            username += "@pizza.com";
             mAuth.signInWithEmailAndPassword(username, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
