@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.d("Login", "Login Failure", task.getException());
-                                Toast.makeText(MainActivity.this, "Login failed.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Login failed." + task.getException(), Toast.LENGTH_SHORT).show();
                                 //updateUI(null);
 
                             }

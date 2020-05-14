@@ -52,7 +52,7 @@
         android:text="Create Account"
         android:gravity="center"
         android:textSize="14sp"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="#2BA600"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

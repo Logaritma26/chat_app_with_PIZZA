@@ -24,8 +24,8 @@ public class register extends AppCompatActivity {
     EditText nameEditText;
     EditText passwordEditText;
     Button createButton;
-    TextView signInButton;
     ProgressBar progressBar;
+
     FirebaseAuth fAuth;
 
     @Override
@@ -36,7 +36,6 @@ public class register extends AppCompatActivity {
         nameEditText = findViewById(R.id.nameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         createButton = findViewById(R.id.createButton);
-        signInButton = findViewById(R.id.signInButton);
         progressBar = findViewById(R.id.progressBar);
 
         fAuth = FirebaseAuth.getInstance();
@@ -75,7 +74,6 @@ public class register extends AppCompatActivity {
                         Log.d("register", "failed : " + task.getException());
                         Toast.makeText(register.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.INVISIBLE);
-                        signInButton.setVisibility(View.VISIBLE);
                     }
                 }
             });
