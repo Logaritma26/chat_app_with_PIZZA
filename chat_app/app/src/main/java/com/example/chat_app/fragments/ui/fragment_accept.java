@@ -1,4 +1,4 @@
-package com.example.chat_app.fragments;
+package com.example.chat_app.fragments.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,14 +11,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.chat_app.R;
 
-public class fragment_add_contact extends Fragment {
-    private static final String TAG = "Fragment Add Contact";
+public class fragment_accept extends Fragment {
+    private static final String TAG = "Fragment Accept";
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_add_contact, container, false);
+        View view = inflater.inflate(R.layout.fragment_accept, container, false);
          
         return view;
     }

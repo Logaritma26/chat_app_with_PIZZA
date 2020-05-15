@@ -16,7 +16,7 @@
             android:label="@string/title_activity_fragments"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".fragments.fragment_main"
+            android:name=".fragments.ui.fragment_main"
             android:label="@string/title_activity_fragment_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".login.register" />
