@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chat_app.fragments.fragments;
 import com.example.chat_app.login.register;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -79,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("Login", "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-
+                                Intent intent = new Intent(MainActivity.this, fragments.class);
+                                finish();
+                                startActivity(intent);
                                 //updateUI(user);
                             } else {
                                 // If sign in fails, display a message to the user.
@@ -111,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (currentUser != null){
             //updateUI(currentUser);
+            Intent intent = new Intent(MainActivity.this, fragments.class);
+            finish();
+            startActivity(intent);
         }
 
     }
