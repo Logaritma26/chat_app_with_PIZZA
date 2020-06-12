@@ -14,13 +14,13 @@
         <activity
             android:name=".fragments.fragments"
             android:label="@string/title_activity_fragments"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".fragments.ui.fragment_main"
             android:label="@string/title_activity_fragment_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".login.register" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".login.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

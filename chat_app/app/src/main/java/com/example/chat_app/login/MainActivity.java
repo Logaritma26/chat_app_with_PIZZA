@@ -1,4 +1,4 @@
-package com.example.chat_app;
+package com.example.chat_app.login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chat_app.R;
 import com.example.chat_app.fragments.fragments;
-import com.example.chat_app.login.register;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null){
-            //updateUI(currentUser);
             Intent intent = new Intent(MainActivity.this, fragments.class);
             finish();
             startActivity(intent);

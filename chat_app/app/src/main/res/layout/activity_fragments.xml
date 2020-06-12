@@ -16,7 +16,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:menu="@menu/menu">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_con_2"
