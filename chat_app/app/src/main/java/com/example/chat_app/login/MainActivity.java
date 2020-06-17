@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chat_app.ContainerMethods;
 import com.example.chat_app.R;
 import com.example.chat_app.fragments.fragments;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,14 +28,17 @@ public class MainActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private TextView register;
-
+    private TextView login_error;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        login_error = findViewById(R.id.login_error);
         login = findViewById(R.id.login);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
@@ -41,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
+        ContainerMethods.get_own_username(db, mAuth);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.d("Login", "Login Failure", task.getException());
-                                Toast.makeText(MainActivity.this, "Login failed." + task.getException(), Toast.LENGTH_SHORT).show();
+                                login_error.setVisibility(View.VISIBLE);
                                 //updateUI(null);
 
                             }

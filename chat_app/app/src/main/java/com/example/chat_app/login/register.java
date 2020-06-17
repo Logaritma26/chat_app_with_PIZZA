@@ -36,6 +36,9 @@ public class register extends AppCompatActivity {
     FirebaseAuth fAuth;
     FirebaseFirestore db;
 
+    private boolean check = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,24 +74,46 @@ public class register extends AppCompatActivity {
 
             // Registering the user
             fAuth.createUserWithEmailAndPassword(name + "@pizza.com", password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            Log.d("register", "onComplete: " + authResult);
+                            send_data(name);
+                            Toast.makeText(register.this, "Hello " + name, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(register.this, fragments.class);
+                            finish();
+                            startActivity(intent);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("register", "failed : " + e);
+                            Toast.makeText(register.this, "This username is already in use by another account.", Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.INVISIBLE);
+                            createButton.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+                    /*.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()){
                         Log.d("register", "onComplete: " + task.getResult());
+                        //send_data(name);
                         Toast.makeText(register.this, "Hello " + name, Toast.LENGTH_SHORT).show();
-                        send_data(name);
                         Intent intent = new Intent(register.this, fragments.class);
                         finish();
                         startActivity(intent);
                     }
                     else{
                         Log.d("register", "failed : " + task.getException());
-                        Toast.makeText(register.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(register.this, "This username is already in use by another account.", Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.INVISIBLE);
-                    }
-                }
-            });
+                        createButton.setVisibility(View.VISIBLE);
+                    }*/
+
+
         }
     }
 
@@ -96,12 +121,17 @@ public class register extends AppCompatActivity {
 
 
 
-    private void send_data(String username) {
+    private void send_data(final String username) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);
+        data.put("status", "Available");
+        data.put("pp", "");
+        data.put("status_visibilty", true);
+        data.put("pp_visibilty", true);
 
-        db.collection("user_nicks").document(fAuth.getUid())
+
+        db.collection("user_nicks").document(username + "@pizza.com")
                 .set(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -115,6 +145,29 @@ public class register extends AppCompatActivity {
                         Log.w("data send token", "Error writing document", e);
                     }
                 });
+
+
+        Map<String, Object> user_val = new HashMap<>();
+        user_val.put("username", username);
+        user_val.put("pp_url", "");
+        user_val.put("status", "Available");
+
+        db.collection("user_val").document(username + "@pizza.com")
+                .set(user_val)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("data send token", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("data send token", "Error writing document", e);
+                    }
+                });
+
+
 
     }
 

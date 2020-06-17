@@ -3,11 +3,13 @@ package com.example.chat_app.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.chat_app.ContainerMethods;
 import com.example.chat_app.login.MainActivity;
 import com.example.chat_app.R;
 import com.example.chat_app.fragments.ui.search.SearchDataHolder;
 import com.example.chat_app.fragments.ui.search.fragment_add_contact;
 import com.example.chat_app.fragments.ui.fragment_main;
+import com.example.chat_app.menu.profile;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,11 +43,14 @@ public class fragments extends AppCompatActivity {
     FirebaseFirestore db;
     SearchDataHolder dataHolder;
 
-    int last_key_lenght = 0;
-
+    SearchView searchView;
     TabLayout tabs;
     TextView title;
     Toolbar toolbar;
+
+    int last_key_lenght = 0;
+    String own_username = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +61,35 @@ public class fragments extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         dataHolder = SearchDataHolder.getInstance();
+        //ContainerMethods.get_own_username(db, fAuth);
 
-        title = findViewById(R.id.title);
+        own_username = dataHolder.getName();
+
+        set_up_elements_ui();
+
+
+        fab_set();
+
+        search_methods(searchView);
+
+    }
+
+    private void set_up_elements_ui() {
         tabs = findViewById(R.id.tabs);
         toolbar = findViewById(R.id.toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        SearchView searchView = findViewById(R.id.searchView);
-
+        title = findViewById(R.id.title);
+        searchView = findViewById(R.id.searchView);
         setSupportActionBar(toolbar);
 
 
+        mSectionPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        mViewPager = findViewById(R.id.view_pager);
+        setupViewPager(mViewPager);
+        tabs.setupWithViewPager(mViewPager);
+    }
 
-
+    private void fab_set() {
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,18 +97,7 @@ public class fragments extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        mSectionPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        mViewPager = findViewById(R.id.view_pager);
-        setupViewPager(mViewPager);
-        tabs.setupWithViewPager(mViewPager);
-
-
-        search_methods(searchView);
-
     }
-
-
 
 
     private void search_methods(SearchView searchView) {
@@ -95,6 +106,7 @@ public class fragments extends AppCompatActivity {
             public void onClick(View v) {
                 tabs.setVisibility(View.GONE);
                 title.setVisibility(View.GONE);
+                own_username = dataHolder.getName();
             }
         });
 
@@ -115,11 +127,13 @@ public class fragments extends AppCompatActivity {
                         last_key_lenght = newText.length();
                     } else if (last_key_lenght > newText.length()) {
                         dataHolder.clean();
-                        find_user(newText);
+                        ContainerMethods.find_user(newText, db, own_username);
+                        //find_user(newText);
                         last_key_lenght = newText.length();
                     } else {
                         dataHolder.clean();
-                        find_user(newText);
+                        ContainerMethods.find_user(newText, db, own_username);
+                        //find_user(newText);
                         last_key_lenght = newText.length();
                     }
                 }
@@ -139,8 +153,8 @@ public class fragments extends AppCompatActivity {
             }
         });
     }
-
-    private void find_user(final String item){
+/*
+    public void find_user(final String item){
 
         db.collection("user_nicks")
                 .get()
@@ -174,7 +188,7 @@ public class fragments extends AppCompatActivity {
                         }
                     }
                 });
-    }
+    }*/
 
     private void  setupViewPager(ViewPager viewPager){
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -198,14 +212,15 @@ public class fragments extends AppCompatActivity {
         switch (item.getItemId()){
 
             case R.id.item1:
-                //
+                Intent intent_1 = new Intent(fragments.this, profile.class);
+                startActivity(intent_1);
                 return true;
 
             case R.id.item2:
                 fAuth.signOut();
-                Intent intent = new Intent(fragments.this, MainActivity.class);
+                Intent intent_2 = new Intent(fragments.this, MainActivity.class);
                 finish();
-                startActivity(intent);
+                startActivity(intent_2);
                 return true;
 
             default:

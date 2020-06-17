@@ -40,10 +40,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.username.setText(dataHolder.getUsername().get(position));
-        //holder.status.setText(dataHolder.getStatus().get(position));
+        if (dataHolder.getStatus_permissions().get(position)){
+            holder.status.setText(dataHolder.getStatus().get(position));
+        } else {
+            holder.status.setVisibility(View.GONE);
+        }
+
         //Picasso.get().load(dataHolder.getPic_url().get(position)).into(holder.profilepicture);
-        holder.status.setText("deneme");
-        holder.profilepicture.setImageResource(R.mipmap.ic_launcher);
+        holder.profilepicture.setImageResource(R.drawable.cat_pp);
 
     }
 

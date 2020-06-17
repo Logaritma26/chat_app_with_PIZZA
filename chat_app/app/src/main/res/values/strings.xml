@@ -4,4 +4,6 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="title_activity_fragments">fragments</string>
+    <string name="try_again">The username and password you entered did not match with our records. Please check and try again.</string>
+    <string name="settings_profile">Settings</string>
 </resources>

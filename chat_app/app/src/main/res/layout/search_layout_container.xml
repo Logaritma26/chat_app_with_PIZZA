@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/cat_pp" />
 
     </androidx.cardview.widget.CardView>
 
@@ -41,7 +41,7 @@
         android:layout_height="24dp"
 
         android:layout_marginStart="12dp"
-        android:gravity="start"
+        android:gravity="bottom"
 
         android:ellipsize="end"
         android:maxWidth="184dp"
@@ -62,7 +62,7 @@
         android:layout_height="16dp"
 
         android:layout_marginStart="12dp"
-        android:gravity="start"
+        android:gravity="top"
 
         android:ellipsize="end"
         android:maxWidth="184dp"
@@ -82,9 +82,9 @@
 
         android:text="ADD"
 
-        app:layout_constraintBottom_toBottomOf="@+id/status_text"
+        app:layout_constraintBottom_toBottomOf="@+id/homepage_recyclerView_cardview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/username"
-        app:layout_constraintTop_toTopOf="@+id/username" />
+        app:layout_constraintTop_toTopOf="@+id/homepage_recyclerView_cardview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

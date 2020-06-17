@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".login.MainActivity">
 
+    <TextView
+        android:id="@+id/login_error"
+        android:layout_width="288dp"
+        android:layout_height="64dp"
+        android:text="@string/try_again"
+        android:textSize="16sp"
+        android:textColor="#BDB100"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/username"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/username"
         android:layout_width="wrap_content"
