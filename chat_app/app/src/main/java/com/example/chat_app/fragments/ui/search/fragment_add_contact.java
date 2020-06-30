@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chat_app.ContainerMethods;
 import com.example.chat_app.R;
 import com.example.chat_app.Recycler_Click;
 import com.example.chat_app.fragments.fragments;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +35,12 @@ public class fragment_add_contact extends Fragment implements Recycler_Click {
     private static final String TAG = "Fragment Add Contact";
 
     RecyclerView recyclerView;
-    Recycler_Click recycler_click;
 
     SearchDataHolder dataHolder;
     public static SearchAdapter adapter;
 
-
-
-
-
+    FirebaseAuth fAuth;
+    FirebaseFirestore db;
 
     private Context context;
     private Activity activity_search;
@@ -72,17 +71,28 @@ public class fragment_add_contact extends Fragment implements Recycler_Click {
         recyclerView.setLayoutManager(new LinearLayoutManager(activity_search));
         recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
+
+        fAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         dataHolder = SearchDataHolder.getInstance();
 
 
+        OneSignal.startInit(activity_search)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
     }
 
 
     @Override
-    public void OnContactAddClickListener(int position) {
-        String name = dataHolder.getUsername().get(position);
+    public void OnRecyclerClickListener(int position) {
 
-        Toast.makeText(activity_search, name, Toast.LENGTH_SHORT).show();
+        // name = istek gonderilen kullanici
+        String name = dataHolder.getUsername().get(position);
+        name += "@pizza.com";
+
+        ContainerMethods.send_request(db, name, position, activity_search);
     }
 
 }

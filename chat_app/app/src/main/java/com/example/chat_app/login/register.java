@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.onesignal.OneSignal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class register extends AppCompatActivity {
     FirebaseFirestore db;
 
     private boolean check = false;
+
 
 
     @Override
@@ -67,7 +69,7 @@ public class register extends AppCompatActivity {
         final String name = nameEditText.getText().toString();
         final String password = passwordEditText.getText().toString();
 
-        if (!is_empty(name, password)){
+        if (!is_empty(name, password)) {
 
             createButton.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
@@ -79,8 +81,8 @@ public class register extends AppCompatActivity {
                         public void onSuccess(AuthResult authResult) {
                             Log.d("register", "onComplete: " + authResult);
                             send_data(name);
-                            Toast.makeText(register.this, "Hello " + name, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(register.this, fragments.class);
+                            //Toast.makeText(register.this, "Hello " + name, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(register.this, MainActivity.class);
                             finish();
                             startActivity(intent);
                         }
@@ -95,40 +97,34 @@ public class register extends AppCompatActivity {
                         }
                     });
 
-                    /*.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()){
-                        Log.d("register", "onComplete: " + task.getResult());
-                        //send_data(name);
-                        Toast.makeText(register.this, "Hello " + name, Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(register.this, fragments.class);
-                        finish();
-                        startActivity(intent);
-                    }
-                    else{
-                        Log.d("register", "failed : " + task.getException());
-                        Toast.makeText(register.this, "This username is already in use by another account.", Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.INVISIBLE);
-                        createButton.setVisibility(View.VISIBLE);
-                    }*/
-
 
         }
     }
 
 
-
-
-
     private void send_data(final String username) {
 
-        Map<String, Object> data = new HashMap<>();
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+
+
+        final Map<String, Object> data = new HashMap<>();
         data.put("username", username);
         data.put("status", "Available");
         data.put("pp", "");
         data.put("status_visibilty", true);
         data.put("pp_visibilty", true);
+
+
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                data.put("notification", userId);
+            }
+        });
 
 
         db.collection("user_nicks").document(username + "@pizza.com")
@@ -147,10 +143,18 @@ public class register extends AppCompatActivity {
                 });
 
 
-        Map<String, Object> user_val = new HashMap<>();
+        final Map<String, Object> user_val = new HashMap<>();
         user_val.put("username", username);
         user_val.put("pp_url", "");
         user_val.put("status", "Available");
+
+
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                user_val.put("notification_id", userId);
+            }
+        });
 
         db.collection("user_val").document(username + "@pizza.com")
                 .set(user_val)
@@ -168,28 +172,27 @@ public class register extends AppCompatActivity {
                 });
 
 
-
     }
 
     private boolean is_empty(String name, String password) {
-        if (TextUtils.isEmpty(name) && TextUtils.isEmpty(password)){
+        if (TextUtils.isEmpty(name) && TextUtils.isEmpty(password)) {
             nameEditText.setError("Name is required !");
             passwordEditText.setError("Password is required !");
             return true;
         }
-        if (TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             nameEditText.setError("Email is required !");
             return true;
         }
-        if (TextUtils.isEmpty(password)){
+        if (TextUtils.isEmpty(password)) {
             passwordEditText.setError("Password is required !");
             return true;
         }
-        if (nameEditText.length() > 15){
+        if (nameEditText.length() > 15) {
             nameEditText.setError("Username must not be above 15 characters !");
             return true;
         }
-        if (password.length() < 6){
+        if (password.length() < 6) {
             passwordEditText.setError("Password must be at least 6 characters !");
             return true;
         }

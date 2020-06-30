@@ -16,11 +16,15 @@ import com.example.chat_app.ContainerMethods;
 import com.example.chat_app.R;
 import com.example.chat_app.fragments.fragments;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.onesignal.OneSignal;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        ContainerMethods.get_own_username(db, mAuth);
+
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private void login(String username, String password) {
         if (!username.isEmpty() &&  !password.isEmpty()){
             username += "@pizza.com";
+            final String name = username;
             mAuth.signInWithEmailAndPassword(username, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -86,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("Login", "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                ContainerMethods.get_own_username(db, mAuth);
+                                renew_player_id(name);
                                 Intent intent = new Intent(MainActivity.this, fragments.class);
                                 finish();
                                 startActivity(intent);
@@ -112,6 +119,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private void renew_player_id(String name) {
+        OneSignal.startInit(MainActivity.this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+
+        final DocumentReference reference_val = db.collection("user_val").document(name);
+        final DocumentReference reference_nicks = db.collection("user_nicks").document(name);
+
+
+
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                update_field(reference_val, "notification_id", userId);
+                update_field(reference_nicks, "notification", userId);
+            }
+        });
+    }
+
+    private void update_field(DocumentReference reference, String field_name, String value){
+
+        reference
+                .update(field_name, value)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("renew player id", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("renew player id", "Error updating document", e);
+                    }
+                });
+
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -119,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null){
+            ContainerMethods.get_own_username(db, mAuth);
             Intent intent = new Intent(MainActivity.this, fragments.class);
             finish();
             startActivity(intent);

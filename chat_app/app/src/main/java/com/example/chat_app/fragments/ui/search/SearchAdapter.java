@@ -41,6 +41,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         holder.username.setText(dataHolder.getUsername().get(position));
         if (dataHolder.getStatus_permissions().get(position)){
+            holder.status.setVisibility(View.VISIBLE);
             holder.status.setText(dataHolder.getStatus().get(position));
         } else {
             holder.status.setVisibility(View.GONE);
@@ -82,7 +83,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         @Override
         public void onClick(View v) {
-            recycler_click.OnContactAddClickListener(getAdapterPosition());
+            recycler_click.OnRecyclerClickListener(getAdapterPosition());
         }
     }
 

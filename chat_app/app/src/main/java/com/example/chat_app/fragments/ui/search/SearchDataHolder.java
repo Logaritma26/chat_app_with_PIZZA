@@ -11,6 +11,7 @@ public class SearchDataHolder {
     private List<String> username = new ArrayList<>();
     private List<String> status = new ArrayList<>();
     private List<String> pic_url = new ArrayList<>();
+    private List<String> notification_url = new ArrayList<>();
     private List<Boolean> status_permissions = new ArrayList<>();
     private List<Boolean> pic_permissions = new ArrayList<>();
 
@@ -18,6 +19,15 @@ public class SearchDataHolder {
     private static SearchDataHolder dataHolder;
 
     private SearchDataHolder() {
+    }
+
+
+    public List<String> getNotification_url() {
+        return notification_url;
+    }
+
+    public void addNotification_url(String notification_url) {
+        this.notification_url.add(notification_url);
     }
 
     public List<String> getUsername() {
@@ -69,13 +79,13 @@ public class SearchDataHolder {
     }
 
 
-
     public void clean(){
         dataHolder.getStatus().clear();
         dataHolder.getPic_url().clear();
         dataHolder.getUsername().clear();
         dataHolder.getStatus_permissions().clear();
         dataHolder.getPic_permissions().clear();
+        dataHolder.getNotification_url().clear();
     }
 
 

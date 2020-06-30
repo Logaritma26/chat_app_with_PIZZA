@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/homepage_recyclerView_cardview"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+
+        android:elevation="4dp"
+        android:focusable="true"
+        app:cardCornerRadius="32dp"
+
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/decline"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/cat_pp" />
+
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="184dp"
+        android:layout_height="24dp"
+
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+
+        android:gravity="bottom"
+        android:maxWidth="184dp"
+        android:maxLines="1"
+
+        android:text="username"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textSize="16sp"
+
+        app:layout_constraintBottom_toTopOf="@+id/status_text"
+        app:layout_constraintStart_toEndOf="@+id/homepage_recyclerView_cardview"
+        app:layout_constraintTop_toTopOf="@+id/homepage_recyclerView_cardview" />
+
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="184dp"
+        android:layout_height="16dp"
+
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+
+        android:gravity="top"
+        android:maxWidth="184dp"
+        android:maxLines="1"
+
+        android:text="Available"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+
+        app:layout_constraintBottom_toBottomOf="@+id/homepage_recyclerView_cardview"
+        app:layout_constraintStart_toEndOf="@+id/homepage_recyclerView_cardview"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <Button
+        android:id="@+id/button_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Accept"
+        android:layout_marginEnd="12dp"
+
+        app:layout_constraintBottom_toBottomOf="@+id/homepage_recyclerView_cardview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/homepage_recyclerView_cardview" />
+
+    <Button
+        android:id="@+id/decline"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+
+        android:background="@drawable/ic_clear"
+        android:layout_margin="12dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/homepage_recyclerView_cardview"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

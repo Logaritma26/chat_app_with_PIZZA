@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.chat_app.ContainerMethods;
+import com.example.chat_app.fragments.ui.pending.PendingDataHolder;
+import com.example.chat_app.fragments.ui.pending.fragment_accept;
 import com.example.chat_app.login.MainActivity;
 import com.example.chat_app.R;
 import com.example.chat_app.fragments.ui.search.SearchDataHolder;
@@ -11,14 +13,18 @@ import com.example.chat_app.fragments.ui.search.fragment_add_contact;
 import com.example.chat_app.fragments.ui.fragment_main;
 import com.example.chat_app.menu.profile;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.onesignal.OneSignal;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
@@ -36,14 +42,14 @@ import android.widget.TextView;
 
 public class fragments extends AppCompatActivity {
 
-    private SectionsPagerAdapter mSectionPagerAdapter;
     private ViewPager mViewPager;
 
     FirebaseAuth fAuth;
     FirebaseFirestore db;
     SearchDataHolder dataHolder;
+    PendingDataHolder pendingDataHolder;
 
-    SearchView searchView;
+    public static SearchView searchView;
     TabLayout tabs;
     TextView title;
     Toolbar toolbar;
@@ -58,14 +64,22 @@ public class fragments extends AppCompatActivity {
         setContentView(R.layout.activity_fragments);
 
 
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+
         dataHolder = SearchDataHolder.getInstance();
-        //ContainerMethods.get_own_username(db, fAuth);
+        //pendingDataHolder = PendingDataHolder.getInstance();
 
         own_username = dataHolder.getName();
 
+
+
         set_up_elements_ui();
+
 
 
         fab_set();
@@ -82,10 +96,10 @@ public class fragments extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        mSectionPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mViewPager = findViewById(R.id.view_pager);
         setupViewPager(mViewPager);
         tabs.setupWithViewPager(mViewPager);
+
     }
 
     private void fab_set() {
@@ -128,12 +142,10 @@ public class fragments extends AppCompatActivity {
                     } else if (last_key_lenght > newText.length()) {
                         dataHolder.clean();
                         ContainerMethods.find_user(newText, db, own_username);
-                        //find_user(newText);
                         last_key_lenght = newText.length();
                     } else {
                         dataHolder.clean();
                         ContainerMethods.find_user(newText, db, own_username);
-                        //find_user(newText);
                         last_key_lenght = newText.length();
                     }
                 }
@@ -153,51 +165,14 @@ public class fragments extends AppCompatActivity {
             }
         });
     }
-/*
-    public void find_user(final String item){
 
-        db.collection("user_nicks")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("get data for search", "Success");
-
-                                String holder = null;
-
-                                try {
-                                    holder = (String) document.get("username");
-                                }catch (Exception e){
-                                    Log.d("data null search", e.getMessage());
-                                }
-
-                                if (holder != null){
-                                    if (holder.contains(item)){
-                                        dataHolder.addUsername(holder);
-                                        fragment_add_contact.adapter.notifyDataSetChanged();
-                                    }
-                                }
-
-                            }
-
-                        } else {
-                            Log.d("get data for search", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-    }*/
-
-    private void  setupViewPager(ViewPager viewPager){
+    private void setupViewPager(ViewPager viewPager){
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         adapter.addFragment(new fragment_main(), "CHATS");
         adapter.addFragment(new fragment_add_contact(), "SEARCH");
-        adapter.addFragment(new fragment_main(), "PENDING");
+        adapter.addFragment(new fragment_accept(), "PENDING");
         viewPager.setAdapter(adapter);
     }
-
 
 
     @Override
@@ -218,6 +193,7 @@ public class fragments extends AppCompatActivity {
 
             case R.id.item2:
                 fAuth.signOut();
+                delete_player_id(dataHolder.getName());
                 Intent intent_2 = new Intent(fragments.this, MainActivity.class);
                 finish();
                 startActivity(intent_2);
@@ -228,12 +204,47 @@ public class fragments extends AppCompatActivity {
         }
     }
 
+
+
+    private void delete_player_id(String own_username){
+        own_username += "@pizza.com";
+
+        final DocumentReference reference_val = db.collection("user_val").document(own_username);
+        final DocumentReference reference_nicks = db.collection("user_nicks").document(own_username);
+
+        update_field_notification_id(reference_val, "notification_id", "none");
+        update_field_notification_id(reference_nicks, "notification", "none");
+
+    }
+
+    private void update_field_notification_id(DocumentReference reference, String field_name, String value){
+
+        reference
+                .update(field_name, value)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("renew player id", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("renew player id", "Error updating document", e);
+                    }
+                });
+
+    }
+
     @Override
     public void onBackPressed() {
 
         super.onBackPressed();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-
+    }
 }

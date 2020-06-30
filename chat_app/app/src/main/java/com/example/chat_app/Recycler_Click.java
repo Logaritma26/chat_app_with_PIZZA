@@ -2,5 +2,6 @@ package com.example.chat_app;
 
 public interface Recycler_Click {
 
-    void OnContactAddClickListener(int position);
+    void OnRecyclerClickListener(int position);
+
 }
