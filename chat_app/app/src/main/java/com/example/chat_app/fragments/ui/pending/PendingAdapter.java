@@ -1,31 +1,26 @@
 package com.example.chat_app.fragments.ui.pending;
 
-import android.os.IInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chat_app.R;
-import com.example.chat_app.Recycler_Click;
-import com.example.chat_app.fragments.ui.search.SearchAdapter;
+import com.example.chat_app.click_manager.Recycler_Click;
 
 public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHolder> {
 
     PendingDataHolder pendingDataHolder;
     Recycler_Click recycler_click;
-    OnDeclineListener onDeclineListener;
 
-    public PendingAdapter(Recycler_Click recycler_click, OnDeclineListener declineListener) {
+    public PendingAdapter(Recycler_Click recycler_click) {
         this.pendingDataHolder = PendingDataHolder.getInstance();
         this.recycler_click = recycler_click;
-        this.onDeclineListener = declineListener;
 
     }
 
@@ -33,7 +28,7 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.pending_layout_container, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view, recycler_click, onDeclineListener);
+        ViewHolder viewHolder = new ViewHolder(view, recycler_click);
         return viewHolder;
     }
 
@@ -65,9 +60,8 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
         Button button;
         Button decline;
         Recycler_Click recycler_click;
-        OnDeclineListener declineListener;
 
-        public ViewHolder(@NonNull View itemView, Recycler_Click recycler_click, OnDeclineListener onDeclineListener) {
+        public ViewHolder(@NonNull View itemView, Recycler_Click recycler_click) {
             super(itemView);
 
             profilepicture = itemView.findViewById(R.id.imageView);
@@ -76,7 +70,6 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
             button = itemView.findViewById(R.id.button_add);
             decline = itemView.findViewById(R.id.decline);
             this.recycler_click = recycler_click;
-            this.declineListener = onDeclineListener;
 
             button.setOnClickListener(this);
             decline.setOnClickListener(decline_click);
@@ -84,20 +77,16 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
 
         @Override
         public void onClick(View v) {
-
             recycler_click.OnRecyclerClickListener(getAdapterPosition());
         }
 
         View.OnClickListener decline_click = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                declineListener.OnDeclineClick(getAdapterPosition());
+                recycler_click.OnDeclineClickListener(getAdapterPosition());
             }
         };
 
     }
 
-    public interface OnDeclineListener{
-        void OnDeclineClick(int position);
-    }
 }

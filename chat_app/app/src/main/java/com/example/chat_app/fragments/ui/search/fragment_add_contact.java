@@ -3,41 +3,35 @@ package com.example.chat_app.fragments.ui.search;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chat_app.ContainerMethods;
+import com.example.chat_app.OwnData;
 import com.example.chat_app.R;
-import com.example.chat_app.Recycler_Click;
-import com.example.chat_app.fragments.fragments;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.chat_app.click_manager.AbstractMakeClickFragment;
+import com.example.chat_app.click_manager.Recycler_Click;
+import com.example.chat_app.fragments.ui.pending.PendingDataHolder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.onesignal.OneSignal;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class fragment_add_contact extends Fragment implements Recycler_Click {
+public class fragment_add_contact extends AbstractMakeClickFragment {
     private static final String TAG = "Fragment Add Contact";
 
     RecyclerView recyclerView;
-
-    SearchDataHolder dataHolder;
     public static SearchAdapter adapter;
+
+    SearchDataHolder searchDataHolder;
+    OwnData ownData;
+    PendingDataHolder pendingDataHolder;
 
     FirebaseAuth fAuth;
     FirebaseFirestore db;
@@ -75,7 +69,9 @@ public class fragment_add_contact extends Fragment implements Recycler_Click {
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        dataHolder = SearchDataHolder.getInstance();
+        searchDataHolder = SearchDataHolder.getInstance();
+        ownData = OwnData.getInstance();
+        pendingDataHolder = PendingDataHolder.getInstance();
 
 
         OneSignal.startInit(activity_search)
@@ -89,10 +85,13 @@ public class fragment_add_contact extends Fragment implements Recycler_Click {
     public void OnRecyclerClickListener(int position) {
 
         // name = istek gonderilen kullanici
-        String name = dataHolder.getUsername().get(position);
+        String name = searchDataHolder.getUsername().get(position);
         name += "@pizza.com";
 
         ContainerMethods.send_request(db, name, position, activity_search);
+
     }
+
+
 
 }

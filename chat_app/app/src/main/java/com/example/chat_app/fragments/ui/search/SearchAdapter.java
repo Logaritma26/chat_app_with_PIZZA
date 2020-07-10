@@ -11,19 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chat_app.R;
-import com.example.chat_app.Recycler_Click;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.chat_app.click_manager.Recycler_Click;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
-    SearchDataHolder dataHolder;
+    SearchDataHolder searchDataHolder;
     Recycler_Click recycler_click;
 
     public SearchAdapter(Recycler_Click recycler_click) {
-        dataHolder = SearchDataHolder.getInstance();
+        searchDataHolder = SearchDataHolder.getInstance();
         this.recycler_click = recycler_click;
     }
 
@@ -39,10 +35,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.username.setText(dataHolder.getUsername().get(position));
-        if (dataHolder.getStatus_permissions().get(position)){
+        holder.username.setText(searchDataHolder.getUsername().get(position));
+        if (searchDataHolder.getStatus_permissions().get(position)){
             holder.status.setVisibility(View.VISIBLE);
-            holder.status.setText(dataHolder.getStatus().get(position));
+            holder.status.setText(searchDataHolder.getStatus().get(position));
         } else {
             holder.status.setVisibility(View.GONE);
         }
@@ -56,7 +52,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return dataHolder.getUsername().size();
+        return searchDataHolder.getUsername().size();
     }
 
 

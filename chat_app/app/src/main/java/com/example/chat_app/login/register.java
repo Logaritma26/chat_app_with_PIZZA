@@ -3,7 +3,9 @@ package com.example.chat_app.login;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -71,7 +73,9 @@ public class register extends AppCompatActivity {
 
         if (!is_empty(name, password)) {
 
-            createButton.setVisibility(View.INVISIBLE);
+            nameEditText.setVisibility(View.GONE);
+            passwordEditText.setVisibility(View.GONE);
+            createButton.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
 
             // Registering the user
@@ -81,7 +85,7 @@ public class register extends AppCompatActivity {
                         public void onSuccess(AuthResult authResult) {
                             Log.d("register", "onComplete: " + authResult);
                             send_data(name);
-                            //Toast.makeText(register.this, "Hello " + name, Toast.LENGTH_SHORT).show();
+                            save_username_shared(name);
                             Intent intent = new Intent(register.this, MainActivity.class);
                             finish();
                             startActivity(intent);
@@ -94,11 +98,20 @@ public class register extends AppCompatActivity {
                             Toast.makeText(register.this, "This username is already in use by another account.", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.INVISIBLE);
                             createButton.setVisibility(View.VISIBLE);
+                            nameEditText.setVisibility(View.VISIBLE);
+                            passwordEditText.setVisibility(View.VISIBLE);
                         }
                     });
 
 
         }
+    }
+
+    private void save_username_shared(String shared_username) {
+        SharedPreferences sharedPref = getSharedPreferences("Username", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("username",shared_username);
+        editor.apply();
     }
 
 

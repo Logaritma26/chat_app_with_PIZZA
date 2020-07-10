@@ -16,13 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chat_app.ContainerMethods;
 import com.example.chat_app.R;
-import com.example.chat_app.Recycler_Click;
-import com.example.chat_app.fragments.ui.search.SearchAdapter;
+import com.example.chat_app.click_manager.AbstractMakeClickFragment;
+import com.example.chat_app.click_manager.Recycler_Click;
 import com.example.chat_app.fragments.ui.search.SearchDataHolder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class fragment_accept extends Fragment implements Recycler_Click, PendingAdapter.OnDeclineListener {
+public class fragment_accept extends AbstractMakeClickFragment {
     private static final String TAG = "Fragment Accept";
 
     SearchDataHolder dataHolder;
@@ -72,12 +72,10 @@ public class fragment_accept extends Fragment implements Recycler_Click, Pending
         pendingDataHolder = PendingDataHolder.getInstance();
 
         recyclerView = view.findViewById(R.id.recycler_view_pending);
-        adapter = new PendingAdapter(this, this);
+        adapter = new PendingAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity_accept));
         recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-
-
 
 
     }
@@ -86,10 +84,14 @@ public class fragment_accept extends Fragment implements Recycler_Click, Pending
     @Override
     public void OnRecyclerClickListener(int position) {
         Toast.makeText(activity_accept, "accept", Toast.LENGTH_SHORT).show();
+        ContainerMethods.accept_request(position, db);
+        pendingDataHolder.clean_at(position);
+        adapter.notifyDataSetChanged();
     }
 
+
     @Override
-    public void OnDeclineClick(int position) {
+    public void OnDeclineClickListener(int position) {
         Toast.makeText(activity_accept, "decline", Toast.LENGTH_SHORT).show();
         ContainerMethods.delete_request(db, position);
         pendingDataHolder.clean_at(position);
@@ -100,7 +102,9 @@ public class fragment_accept extends Fragment implements Recycler_Click, Pending
     public void onStart() {
         super.onStart();
         ContainerMethods.get_requests(db);
+
     }
+
 
 
 

@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#8BC34A</color>
-    <color name="colorPrimaryDark">#73a61f</color>
+    <color name="colorPrimary">#39ae78</color>
+    <color name="colorPrimaryDark">#F7F7F7</color>
     <color name="colorAccent">#FFEE00</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="black_grey">#1B1B1B</color>
+
+    <color name="coming_text_message">#DFDFDF</color>
+    <color name="main_green_dark">#39ae78</color>
+    <color name="main_green">#4BDD9A</color>
+    <color name="grif7">#EFEFEF</color>
+    <color name="grif5">#E5E5E5</color>
+    <color name="griDC">#DCDCDC</color>
+    <color name="gri198">#BFBFBF</color>
+    <color name="login_button">#39ACA7</color>
+    <color name="create_account_text">#bf8d49</color>
+    <color name="create_account_border">#d49e56</color>
+
+    <color name="red_alert">#ff7f78</color>
+    <color name="register_button">#FFAC24</color>
 </resources>

@@ -2,11 +2,18 @@ package com.example.chat_app.login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Guideline;
+import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText password;
     private TextView register;
     private TextView login_error;
+    private Guideline guideline;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -42,11 +50,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Window window = MainActivity.this.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+
         login_error = findViewById(R.id.login_error);
         login = findViewById(R.id.login);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         register = findViewById(R.id.create_account);
+        guideline = findViewById(R.id.guideline4);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -81,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void login(String username, String password) {
         if (!username.isEmpty() &&  !password.isEmpty()){
+            final String shared_username = username;
             username += "@pizza.com";
             final String name = username;
             mAuth.signInWithEmailAndPassword(username, password)
@@ -91,8 +106,11 @@ public class MainActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("Login", "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                ContainerMethods.get_own_username(db, mAuth);
+                                ContainerMethods.get_own_data(db, mAuth);
+                                ContainerMethods.get_own_friends(db, mAuth);
+                                ContainerMethods.get_own_sent_requests(db, mAuth);
                                 renew_player_id(name);
+                                save_username_shared(shared_username);
                                 Intent intent = new Intent(MainActivity.this, fragments.class);
                                 finish();
                                 startActivity(intent);
@@ -102,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("Login", "Login Failure", task.getException());
                                 login_error.setVisibility(View.VISIBLE);
                                 //updateUI(null);
-
+                                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) guideline.getLayoutParams();
+                                params.guidePercent = 0.82f;
+                                guideline.setLayoutParams(params);
                             }
 
                         }
@@ -119,6 +139,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void save_username_shared(String shared_username) {
+        SharedPreferences sharedPref = getSharedPreferences("Username", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("username",shared_username);
+        editor.apply();
+    }
 
     private void renew_player_id(String name) {
         OneSignal.startInit(MainActivity.this)
@@ -167,7 +193,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null){
-            ContainerMethods.get_own_username(db, mAuth);
+            ContainerMethods.get_own_data(db, mAuth);
+            ContainerMethods.get_own_friends(db, mAuth);
+            ContainerMethods.get_own_sent_requests(db, mAuth);
             Intent intent = new Intent(MainActivity.this, fragments.class);
             finish();
             startActivity(intent);

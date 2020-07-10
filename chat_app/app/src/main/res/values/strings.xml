@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Chat with Pizza</string>
+    <string name="app_name">Folium</string>
     <string name="title_activity_fragment_main">fragment_main</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
