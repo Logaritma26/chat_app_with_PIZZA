@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,11 +30,12 @@ import com.onesignal.OneSignal;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 
 public class ContainerMethods {
 
@@ -49,6 +51,280 @@ public class ContainerMethods {
         searchDataHolder = SearchDataHolder.getInstance();
         pendingDataHolder = PendingDataHolder.getInstance();
         ownData = OwnData.getInstance();
+
+    }
+
+    public static void update_field(DocumentReference reference, String field_name, String value){
+            reference
+                    .update(field_name, value)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("updating field", "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("updating field", "Error updating document", e);
+                        }
+                    });
+
+    }
+
+    public static void get_notId_for_send_message(final FirebaseFirestore db, final String username, final String message) {
+
+        db.collection("user_val").document(username + "@pizza.com")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.d("get notId", "succeed");
+                                String notId = null;
+                                notId = (String) document.get("notification_id");
+                                if (notId != null) {
+                                    send_notification_for_message(notId, message);
+                                }
+                            } else {
+                                Log.d("get notId", "No such document");
+                            }
+                        } else {
+                            Log.d("get notId", "get failed with ", task.getException());
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+    }
+
+    public static void send_notification_for_message(final String player_id, String message) {
+        String not_message = ownData.getName() + " : " + message;
+
+        try {
+            OneSignal.postNotification(new JSONObject("{'contents': {'en':'" + not_message + "'}, 'include_player_ids': ['" + player_id + "']}"), null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public static void set_last_seen_if(final FirebaseFirestore db, final int dest) {
+        db.collection("user_val").document(ownData.getName() + "@pizza.com")
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Log.d("get seen start", "succeed");
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d("get seen start", "succeed");
+                        int seen = document.getLong("seen").intValue();
+                        if (seen == 0) {
+                            change_last_seen_to(db, dest);
+                        }
+                    } else {
+                        Log.d("get seen start", "No such document");
+                    }
+                } else {
+                    Log.d("get seen start", "get failed with ", task.getException());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("get seen start", "onFailure: " + e.getMessage());
+            }
+        });
+    }
+
+    public static void change_last_seen_to(FirebaseFirestore db, final int code) {
+
+        Date date = new Date(System.currentTimeMillis());
+        Timestamp time = new Timestamp(date);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("last_seen", code);
+        data.put("time_last_seen", time);
+
+        db.collection("user_val").document(ownData.getName() + "@pizza.com")
+                .update(data)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("updating last seen", "succeed " + code);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("updating last seen", "onFailure: " + e.getMessage());
+            }
+        });
+
+    }
+
+    public static void send_download_url(final FirebaseFirestore db, final String url) {
+        db.collection("user_val").document(ownData.getName() + "@pizza.com")
+                .update("pp_url", url)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("updating pp_url", "onComplete: ");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("updating pp_url", "onFailure: " + e.getMessage());
+            }
+        });
+
+        db.collection("user_nicks").document(ownData.getName() + "@pizza.com")
+                .update("pp", url)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("updating pp", "onComplete: ");
+                        update_pp_friends_get_friends_username(db, url);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("updating pp", "onFailure: " + e.getMessage());
+            }
+        });
+
+        ownData.setPic_url(url);
+    }
+
+    public static void update_pp_friends_get_friends_username(final FirebaseFirestore db, final String url) {
+
+        db.collection("user_val").document(ownData.getName() + "@pizza.com")
+                .collection("friends").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String username = null;
+                        try {
+                            username = (String) document.get("username");
+                        } catch (Exception ignored) {
+                        }
+                        if (username != null) {
+                            update_pp_friends_change_pp_url_in_friends(db, url, username);
+                        }
+                        Log.d("get flist for pp update", document.getId() + " => " + document.getData());
+                    }
+                } else {
+                    Log.d("get flist for pp update", "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("get flist for pp update", "onFailure: " + e.getMessage());
+            }
+        });
+    }
+
+    public static void update_pp_friends_change_pp_url_in_friends(FirebaseFirestore db, final String url, String username) {
+
+        db.collection("user_val").document(username + "@pizza.com")
+                .collection("friends").document(ownData.getName() + "@pizza.com")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.d("get friends' document", "DocumentSnapshot data: " + document.getData());
+                                document.getReference().update("pp", url);
+                            } else {
+                                Log.d("get friends' document", "No such document");
+                            }
+                        } else {
+                            Log.d("get friends' document", "get failed with ", task.getException());
+                        }
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("get friends' document", "onFailure: " + e.getMessage());
+            }
+        });
+    }
+
+    public static void change_seen_status(FirebaseFirestore db, Integer seen) {
+        db.collection("user_val")
+                .document(ownData.getName() + "@pizza.com")
+                .update("seen", seen)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("update seen status", "onComplete: " + task.getResult());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("update seen status", "onFailure: " + e);
+            }
+        });
+
+        db.collection("user_nicks")
+                .document(ownData.getName() + "@pizza.com")
+                .update("seen", seen)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("update seen status", "onComplete: " + task.getResult());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("update seen status", "onFailure: " + e);
+            }
+        });
+
+    }
+
+    public static void change_status(FirebaseFirestore db, String new_status) {
+        db.collection("user_val")
+                .document(ownData.getName() + "@pizza.com")
+                .update("status", new_status)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("update status", "onComplete: " + task.getResult());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("update status", "onFailure: " + e);
+            }
+        });
+
+        db.collection("user_nicks")
+                .document(ownData.getName() + "@pizza.com")
+                .update("status", new_status)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("update status", "onComplete: " + task.getResult());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("update status", "onFailure: " + e);
+            }
+        });
 
     }
 
@@ -77,6 +353,46 @@ public class ContainerMethods {
             db.collection("user_val")
                     .document(ownData.getName() + "@pizza.com").collection("chats")
                     .document(username.get(i) + "@pizza.com").delete();
+
+        }
+
+    }
+
+    public static void delete_friends(FirebaseFirestore db, List<String> username) {
+
+        for (int i = 0; i < username.size(); i++) {
+
+            db.collection("user_val")
+                    .document(ownData.getName() + "@pizza.com").collection("friends")
+                    .document(username.get(i) + "@pizza.com")
+                    .delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.d("delete friend from own", "onComplete: ");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("delete friend from own", "onFailure: " + e.getMessage());
+                        }
+            });
+
+            db.collection("user_val")
+                    .document(username.get(i) + "@pizza.com").collection("friends")
+                    .document(ownData.getName() + "@pizza.com")
+                    .delete()
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.d("delete own from friend", "onComplete: ");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("delete own from friend", "onFailure: " + e.getMessage());
+                }
+            });
 
         }
 
@@ -161,6 +477,7 @@ public class ContainerMethods {
         data_other.put("message", message);
         data_other.put("pp_url", ownData.getPic_url());
         data_other.put("time", Timestamp.now());
+        data_other.put("seen", ownData.getSeen());
 
         db.collection("user_val").document(username + "@pizza.com")
                 .collection("chats").document(ownData.getName() + "@pizza.com")
@@ -181,7 +498,7 @@ public class ContainerMethods {
 
     }
 
-    public static void message_seen(final FirebaseFirestore db, final String username){
+    public static void message_seen(final FirebaseFirestore db, final String username) {
 
         db.collection("user_val").document(username + "@pizza.com")
                 .collection("chats").document(ownData.getName() + "@pizza.com")
@@ -203,46 +520,6 @@ public class ContainerMethods {
                     }
                 });
 
-
-
-
-        /*db.collection("user_val").document(username + "@pizza.com")
-                .collection("chats").document(ownData.getName() + "@pizza.com")
-                .collection(ownData.getName()).document()
-                .update("seen", true)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("message seen", "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("message seen", "Error writing document", e);
-                    }
-                });*/
-
-        //b787a1bf-a069-43b8-a99e-6afaab525b9c
-    }
-    public static void seen_2(FirebaseFirestore db, String username, String doc_id){
-
-        db.collection("user_val").document(username + "@pizza.com")
-                .collection("chats").document(ownData.getName() + "@pizza.com")
-                .collection(ownData.getName() + "@pizza.com").document(doc_id)
-                .update("seen", true)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("message seen", "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("message seen", "Error writing document", e);
-                    }
-                });
     }
 
     public static void accept_request(int position, FirebaseFirestore db) {
@@ -637,6 +914,7 @@ public class ContainerMethods {
                                 String status = null;
                                 Boolean status_permission = null;
                                 String notification_ch = null;
+                                Integer seen = null;
 
                                 try {
                                     name_holder = (String) document.get("username");
@@ -645,6 +923,7 @@ public class ContainerMethods {
                                     status = (String) document.get("status");
                                     status_permission = (Boolean) document.get("status_visibilty");
                                     notification_ch = (String) document.get("notification");
+                                    seen = document.getLong("seen").intValue();
 
                                 } catch (Exception e) {
                                     Log.d("data null search", e.getMessage());
@@ -658,7 +937,9 @@ public class ContainerMethods {
                                     ownData.setStatus(status);
                                     ownData.setStatus_permission(status_permission);
                                     ownData.setNotification_ch(notification_ch);
+                                    ownData.setSeen(seen);
                                 }
+
 
                             } else {
                                 Log.d("document exists?", "No such document");

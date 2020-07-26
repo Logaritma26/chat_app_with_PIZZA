@@ -1,7 +1,10 @@
 package com.example.chat_app.fragments.ui.home_page;
 
+import androidx.annotation.Keep;
+
 import com.google.firebase.Timestamp;
 
+@Keep
 public class HomeFireChats {
 
     private String username;
@@ -34,4 +37,5 @@ public class HomeFireChats {
     public Timestamp getTime() {
         return time;
     }
+
 }

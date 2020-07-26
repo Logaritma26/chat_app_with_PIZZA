@@ -7,6 +7,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+    <View
+        android:id="@+id/view_cover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="12dp"
+        android:background="@color/main_green"
+        android:alpha="0.3"
+        android:layout_margin="3dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/recyclerView_cardview"
         android:layout_width="48dp"
@@ -31,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/cat_pp" />
+            android:src="@drawable/default_pp" />
 
     </androidx.cardview.widget.CardView>
 

@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/cat_pp" />
+            android:src="@drawable/default_pp" />
 
     </androidx.cardview.widget.CardView>
 
@@ -81,7 +81,8 @@
         android:layout_height="wrap_content"
 
         android:text="ADD"
-
+        android:background="@drawable/curve_add"
+        android:textColor="@color/black_grey"
         app:layout_constraintBottom_toBottomOf="@+id/homepage_recyclerView_cardview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/username"

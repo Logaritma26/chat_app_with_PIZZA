@@ -21,6 +21,7 @@ import com.example.chat_app.OwnData;
 import com.example.chat_app.R;
 import com.example.chat_app.chat_page.ChatPage;
 import com.example.chat_app.click_manager.DeleteButtonVisibleFragments;
+import com.example.chat_app.fragments.fragments;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,11 +42,6 @@ public class fragment_main extends AbstractMakeClickFragment {
     public static RecyclerView recyclerView;
     public static HomeFireAdapter adapter;
 
-    private String username_shared;
-
-
-    /*List<String> message = new ArrayList<>();
-    List<String> pp_url = new ArrayList<>();*/
 
     public static List<Integer> selected_adapter_position = new ArrayList<>();
     public static List<String> selected_username = new ArrayList<>();
@@ -76,8 +72,6 @@ public class fragment_main extends AbstractMakeClickFragment {
 
         ownData = OwnData.getInstance();
 
-
-
         chats_home = firebaseFirestore.collection("user_val")
                 .document(ownData.getName() + "@pizza.com").collection("chats");
 
@@ -105,7 +99,7 @@ public class fragment_main extends AbstractMakeClickFragment {
                 .build();
 
 
-        adapter = new HomeFireAdapter(options, this);
+        adapter = new HomeFireAdapter(options, this, activity_home);
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLinearLayoutManager);
@@ -117,7 +111,7 @@ public class fragment_main extends AbstractMakeClickFragment {
     public void OnRecyclerClickListener(String username, String pp_url, View view, int position) {
 
         if (!is_long_clicked){
-            Toast.makeText(activity_home, "deneme calisiyor position : " + (username) , Toast.LENGTH_SHORT).show();
+            fragments.still_running = true;
             Intent intent = new Intent(activity_home, ChatPage.class);
             intent.putExtra("username", username);
             intent.putExtra("pp_url", pp_url);

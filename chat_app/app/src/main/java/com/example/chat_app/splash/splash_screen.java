@@ -19,12 +19,10 @@ public class splash_screen extends AppCompatActivity {
 
         EasySplashScreen easySplashScreen = new EasySplashScreen(splash_screen.this)
                 .withFullScreen()
+                .withBackgroundResource(R.drawable.ic_splashh_hack)
                 .withTargetActivity(MainActivity.class)
-                .withSplashTimeOut(2000)
-                .withLogo(R.drawable.cat_pp)
-                .withBackgroundColor(R.color.colorAccent);
+                .withSplashTimeOut(2000);
 
-        easySplashScreen.getLogo().setScaleType(ImageView.ScaleType.FIT_CENTER);
         View splash = easySplashScreen.create();
         setContentView(splash);
     }

@@ -49,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/cat_pp" />
+                android:src="@drawable/default_pp" />
 
         </androidx.cardview.widget.CardView>
 
@@ -63,9 +63,30 @@
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/recyclerView_cardview"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/recyclerView_cardview" />
+
+        <ImageView
+            android:id="@+id/last_seen_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:layout_constraintStart_toStartOf="@+id/text1"
+            app:layout_constraintTop_toBottomOf="@+id/text1" />
+
+        <TextView
+            android:id="@+id/last_seen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:textColor="@color/faded_text"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:layout_marginBottom="1.5dp"
+            android:layout_marginStart="4dp"
+
+            app:layout_constraintBottom_toBottomOf="@+id/last_seen_icon"
+            app:layout_constraintStart_toEndOf="@+id/last_seen_icon"
+            app:layout_constraintTop_toTopOf="@+id/last_seen_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -112,7 +133,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/fab"
         app:layout_constraintEnd_toStartOf="@+id/fab"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

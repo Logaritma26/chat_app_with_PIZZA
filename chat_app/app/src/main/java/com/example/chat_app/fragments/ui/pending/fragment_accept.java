@@ -72,7 +72,7 @@ public class fragment_accept extends AbstractMakeClickFragment {
         pendingDataHolder = PendingDataHolder.getInstance();
 
         recyclerView = view.findViewById(R.id.recycler_view_pending);
-        adapter = new PendingAdapter(this);
+        adapter = new PendingAdapter(this, activity_accept);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity_accept));
         recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);

@@ -25,6 +25,9 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ChatFireAdapter extends FirestoreRecyclerAdapter<ChatFireMessages, ChatFireAdapter.ViewHolder> {
 
     RecyclerView recyclerView;
@@ -57,6 +60,14 @@ public class ChatFireAdapter extends FirestoreRecyclerAdapter<ChatFireMessages, 
         holder.setIsRecyclable(false);
         holder.message.setText(model.getMessage());
 
+        Date date = new Date(model.getTime().getSeconds() * 1000);
+
+        SimpleDateFormat sfd = new SimpleDateFormat("HH:mm");
+        String dt = sfd.format(date);
+
+        holder.date.setText(dt);
+
+
         if (position == 0) {
             int margin = setMargin(24);
             ConstraintSet constraintSet = new ConstraintSet();
@@ -64,7 +75,6 @@ public class ChatFireAdapter extends FirestoreRecyclerAdapter<ChatFireMessages, 
             constraintSet.connect(R.id.message_text, ConstraintSet.TOP, R.id.message_layout, ConstraintSet.TOP, margin);
             constraintSet.applyTo(holder.constraintLayout);
         }
-
 
         if (model.getUsername().equals(own_name)) {
 
@@ -168,6 +178,7 @@ public class ChatFireAdapter extends FirestoreRecyclerAdapter<ChatFireMessages, 
         public TextView message;
         public ConstraintLayout constraintLayout;
         public ImageView seen_image;
+        public TextView date;
         Recycler_Click recycler_click;
 
         public ViewHolder(@NonNull View itemView, Recycler_Click recycler_click) {
@@ -176,6 +187,7 @@ public class ChatFireAdapter extends FirestoreRecyclerAdapter<ChatFireMessages, 
             constraintLayout = itemView.findViewById(R.id.message_layout);
             this.recycler_click = recycler_click;
             seen_image = itemView.findViewById(R.id.seen_image);
+            date = itemView.findViewById(R.id.time);
 
             itemView.setOnClickListener(this);
         }

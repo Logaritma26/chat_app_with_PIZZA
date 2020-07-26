@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (username != null && password != null){
-                    login(username.getText().toString(), password.getText().toString());
+                    login(username.getText().toString().toLowerCase(), password.getText().toString());
                 } else {
                     Log.d("Login error", "null exception");
                     Toast.makeText(MainActivity.this, "Error occured !", Toast.LENGTH_SHORT).show();
@@ -152,10 +152,8 @@ public class MainActivity extends AppCompatActivity {
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
-
         final DocumentReference reference_val = db.collection("user_val").document(name);
         final DocumentReference reference_nicks = db.collection("user_nicks").document(name);
-
 
 
         OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {

@@ -1,5 +1,6 @@
 package com.example.chat_app.fragments.ui.pending;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.chat_app.R;
 import com.example.chat_app.click_manager.Recycler_Click;
 
@@ -17,10 +19,12 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
 
     PendingDataHolder pendingDataHolder;
     Recycler_Click recycler_click;
+    Context context;
 
-    public PendingAdapter(Recycler_Click recycler_click) {
+    public PendingAdapter(Recycler_Click recycler_click, Context context) {
         this.pendingDataHolder = PendingDataHolder.getInstance();
         this.recycler_click = recycler_click;
+        this.context = context;
 
     }
 
@@ -43,8 +47,18 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
             holder.status.setVisibility(View.GONE);
         }
 
-        //Picasso.get().load(dataHolder.getPic_url().get(position)).into(holder.profilepicture);
-        holder.profilepicture.setImageResource(R.drawable.cat_pp);
+        if (pendingDataHolder.getPic_permissions().get(position)){
+            if (!pendingDataHolder.getPic_url().get(position).equals("")){
+                Glide
+                        .with(context)
+                        .load(pendingDataHolder.getPic_url().get(position))
+                        .centerCrop()
+                        .into(holder.profilepicture);
+            }
+        } else {
+            holder.profilepicture.setImageResource(R.drawable.default_pp);
+        }
+
     }
 
     @Override

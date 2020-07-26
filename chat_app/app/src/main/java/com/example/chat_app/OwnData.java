@@ -12,6 +12,7 @@ public class OwnData {
     private String status = "Available";
     private Boolean status_permission = true;
     private String notification_ch = "none";
+    private Integer seen = 0;
     private List<String> friendList = new ArrayList<>();
     private List<String> requests_sent_list = new ArrayList<>();
 
@@ -67,6 +68,14 @@ public class OwnData {
 
     public void setNotification_ch(String notification_ch) {
         this.notification_ch = notification_ch;
+    }
+
+    public Integer getSeen() {
+        return seen;
+    }
+
+    public void setSeen(Integer seen) {
+        this.seen = seen;
     }
 
     public List<String> getFriendList() {

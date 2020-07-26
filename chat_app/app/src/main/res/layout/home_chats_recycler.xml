@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="12dp"
-        android:background="@color/colorAccent"
+        android:background="@color/main_green"
         android:alpha="0.3"
         android:layout_margin="3dp"
         android:visibility="gone"
@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/cat_pp" />
+            android:src="@drawable/default_pp" />
 
     </androidx.cardview.widget.CardView>
 
@@ -106,6 +106,9 @@
         android:layout_height="wrap_content"
         android:text="deneme"
         android:visibility="gone" />
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

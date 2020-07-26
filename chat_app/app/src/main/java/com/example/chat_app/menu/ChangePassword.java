@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.chat_app.OwnData;
 import com.example.chat_app.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,10 +26,11 @@ public class ChangePassword extends AppCompatActivity {
     FirebaseUser user;
     FirebaseAuth firebaseAuth;
     Button submit;
+    OwnData ownData = OwnData.getInstance();
 
-    EditText username;
-    EditText password;
+    EditText old_pass;
     EditText new_password;
+    EditText verify_password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +40,9 @@ public class ChangePassword extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         submit = findViewById(R.id.button_change);
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
+        old_pass = findViewById(R.id.old_password);
         new_password = findViewById(R.id.new_password);
+        verify_password = findViewById(R.id.verify_password);
 
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -48,10 +50,9 @@ public class ChangePassword extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (check_if_not_empty()){
-                    credential = EmailAuthProvider.getCredential(username.getText().toString() + "@pizza.com", password.getText().toString());
+                    credential = EmailAuthProvider.getCredential(ownData.getName() + "@pizza.com", old_pass.getText().toString());
                     submit();
                 }
-
 
             }
         });
@@ -64,16 +65,21 @@ public class ChangePassword extends AppCompatActivity {
 
         Boolean result = true;
 
-        if (username.getText().toString().isEmpty()){
-            result = false;
-        }
-
-        if (password.getText().toString().isEmpty()){
+        if (old_pass.getText().toString().isEmpty()){
             result = false;
         }
 
         if (new_password.getText().toString().isEmpty()){
             result = false;
+        }
+
+        if (new_password.getText().toString().isEmpty()){
+            result = false;
+        }
+
+        if (!new_password.getText().toString().equals(verify_password.getText().toString())){
+            result = false;
+            Toast.makeText(this, "Passwords don't match !", Toast.LENGTH_SHORT).show();
         }
 
         return result;
@@ -87,7 +93,7 @@ public class ChangePassword extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
 
                 if (task.isSuccessful()) {
-                    user.updatePassword(new_password.getText().toString())
+                    user.updatePassword(verify_password.getText().toString())
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

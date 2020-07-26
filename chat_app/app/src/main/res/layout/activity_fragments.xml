@@ -41,7 +41,8 @@
                     android:focusable="true"
                     app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="21dp"
-
+                    android:visibility="gone"
+                    android:layout_marginStart="3dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -55,16 +56,28 @@
 
                 </androidx.cardview.widget.CardView>
 
+                <ImageView
+                    android:id="@+id/icon_long"
+                    android:layout_width="113dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_title_legendary"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toEndOf="@+id/icon_main"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_toolbar"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:animateLayoutChanges="true"
-                    android:background="@drawable/curve_search"
+                    android:background="@color/colorPrimaryDark"
+                    android:theme="@style/ThemeOverlay.AppCompat.Light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/pp_main"
-                    app:layout_constraintStart_toEndOf="@+id/icon_main"
+                    app:layout_constraintStart_toEndOf="@+id/icon_long"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.appcompat.widget.SearchView
@@ -73,6 +86,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:theme="@style/ThemeOverlay.AppCompat.Light"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -83,6 +97,7 @@
                         android:layout_height="32dp"
                         android:background="@drawable/ic_delete"
                         android:visibility="gone"
+                        android:layout_marginEnd="12dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/searchView"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -108,12 +123,14 @@
                         android:layout_width="42dp"
                         android:layout_height="42dp"
                         android:background="@color/main_green"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_icon_main" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/default_pp"/>
 
                 </androidx.cardview.widget.CardView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         </androidx.appcompat.widget.Toolbar>
 

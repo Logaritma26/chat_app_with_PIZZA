@@ -19,6 +19,8 @@
     <color name="create_account_text">#bf8d49</color>
     <color name="create_account_border">#d49e56</color>
 
+    <color name="red_dark">#B52D25</color>
     <color name="red_alert">#ff7f78</color>
     <color name="register_button">#FFAC24</color>
+    <color name="faded_text">#4F4F4F</color>
 </resources>

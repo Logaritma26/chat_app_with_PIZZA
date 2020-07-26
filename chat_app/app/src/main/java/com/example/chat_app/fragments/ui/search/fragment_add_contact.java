@@ -60,7 +60,7 @@ public class fragment_add_contact extends AbstractMakeClickFragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.recycler_view_search);
-        adapter = new SearchAdapter(this);
+        adapter = new SearchAdapter(this, activity_search);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity_search));
         recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);

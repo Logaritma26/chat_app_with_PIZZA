@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.chat_app.ContainerMethods;
 import com.example.chat_app.R;
 import com.example.chat_app.fragments.fragments;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.onesignal.OneSignal;
 
@@ -68,7 +70,7 @@ public class register extends AppCompatActivity {
     }
 
     private void register_click() {
-        final String name = nameEditText.getText().toString();
+        final String name = nameEditText.getText().toString().toLowerCase();
         final String password = passwordEditText.getText().toString();
 
         if (!is_empty(name, password)) {
@@ -117,12 +119,7 @@ public class register extends AppCompatActivity {
 
     private void send_data(final String username) {
 
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                .init();
-
-
+        init_oneSignal(username);
 
         final Map<String, Object> data = new HashMap<>();
         data.put("username", username);
@@ -130,14 +127,7 @@ public class register extends AppCompatActivity {
         data.put("pp", "");
         data.put("status_visibilty", true);
         data.put("pp_visibilty", true);
-
-
-        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
-            @Override
-            public void idsAvailable(String userId, String registrationId) {
-                data.put("notification", userId);
-            }
-        });
+        data.put("seen", 0);
 
 
         db.collection("user_nicks").document(username + "@pizza.com")
@@ -160,14 +150,8 @@ public class register extends AppCompatActivity {
         user_val.put("username", username);
         user_val.put("pp_url", "");
         user_val.put("status", "Available");
+        user_val.put("seen", 0);
 
-
-        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
-            @Override
-            public void idsAvailable(String userId, String registrationId) {
-                user_val.put("notification_id", userId);
-            }
-        });
 
         db.collection("user_val").document(username + "@pizza.com")
                 .set(user_val)
@@ -214,5 +198,22 @@ public class register extends AppCompatActivity {
         return false;
     }
 
+    private void init_oneSignal(String username) {
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        final DocumentReference reference_val = db.collection("user_val").document(username + "@pizza.com");
+        final DocumentReference reference_nicks = db.collection("user_nicks").document(username + "@pizza.com");
+
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                ContainerMethods.update_field(reference_val, "notification_id", userId);
+                ContainerMethods.update_field(reference_nicks, "notification", userId);
+            }
+        });
+    }
 
 }
