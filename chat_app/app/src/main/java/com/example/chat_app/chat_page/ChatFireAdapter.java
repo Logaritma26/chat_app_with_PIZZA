@@ -57,6 +57,7 @@ public class ChatFireAdapter extends FirestoreRecyclerAdapter<ChatFireMessages, 
 
         counter = getItemCount();
 
+
         holder.setIsRecyclable(false);
         holder.message.setText(model.getMessage());
 
